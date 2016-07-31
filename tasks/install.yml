@@ -1,0 +1,70 @@
+---
+# tasks file for roles/ansible-galera-cluster
+- name: Installer les packages galera , xinetd et resource-agents 
+  yum:
+    pkg: "{{ item }}"
+    state: installed
+  with_items:
+      - xinetd
+      - resource-agents
+      - mariadb-galera-server
+      - MySQL-python
+      - python2-PyMySQL
+      - rsync  
+
+- name: On desactive le lb-haprxy avant de continuer
+  command: pcs resource disable lb-haproxy
+  when: inventory_hostname == mysql_master_node
+  tags: haproxy_disable
+
+- name: Creation du fichier clustercheck pour Pacemaker
+  template:
+    src=etc/sysconfig/clustercheck.j2
+    dest=/etc/sysconfig/clustercheck
+    mode=0644
+
+- name: démarrer le service Mariadb
+  service:
+    name: mariadb
+    state: started
+  tags: toto1
+
+- name: Cretaion du user clustercheck
+  mysql_user: name=clustercheck password={{cluster_userpass}}  host=localhost state=present
+
+- name: Stop Mariadb-server
+  service:
+    name: mariadb
+    state: stopped
+
+- name: copy du fichier galera.cnf
+  template:
+    src=etc/my.cnf.d/galera.cnf.j2
+    dest=/etc/my.cnf.d/galera.cnf
+  tags: copy_galera
+
+- name: Creation du fichier pour Pacemaker
+  copy:
+    src=etc/xinetd.d/galera-monitor
+    dest=/etc/xinetd.d/galera-monitor
+
+- name: démarrer le service Xinetd
+  service:
+    name: xinetd
+    state: started
+
+- name: Authentifier tous les controlleurs
+  command: pcs cluster auth {{ node1 }} {{ node2 }} {{ node3 }}  {{ node4 }} -u hacluster -p "{{ password_hacluster_user }}" --force
+  when: inventory_hostname == mysql_master_node
+
+- name: Creation de la resource mariadb
+  command: pcs resource create mariadb galera enable_creation=true wsrep_cluster_address="gcomm://{{ node1 }},{{ node2 }},{{ node3 }},{{ node4 }}" meta master-max=4 ordered=true op promote timeout=300s on-fail=block --master
+  when: inventory_hostname == mysql_master_node
+
+- name: Reactivation du lb-haproxy
+  command:  pcs resource enable lb-haproxy
+  when: inventory_hostname == mysql_master_node
+
+- name: stonith false
+  command:  pcs  property set stonith-enabled=false
+  when: inventory_hostname == mysql_master_node

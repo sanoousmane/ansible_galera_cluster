@@ -1,0 +1,5 @@
+[test-controller]
+controller-1    ansible_ssh_user="root"
+controller-2    ansible_ssh_user="root"
+controller-3    ansible_ssh_user="root"
+controller-4    ansible_ssh_user="root"

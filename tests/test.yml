@@ -1,0 +1,5 @@
+---
+- hosts: test-controller
+  remote_user: root
+  roles:
+    - ansible_galera_cluster

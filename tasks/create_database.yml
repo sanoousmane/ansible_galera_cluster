@@ -1,0 +1,76 @@
+---
+
+- name: Update root password
+  mysql_user:
+    name: root
+    host: "{{ item }}"
+    password: "{{ mysql_root_password }}"
+    state: present
+  with_items:
+    - '127.0.0.1'
+    - '::1'
+    - localhost
+  tags: update_db_pass
+
+- name: add file my.cnf
+  template:
+    src: my.cnf.j2
+    dest: /root/.my.cnf
+    mode: '0600'
+  tags: copy_mycnf
+
+- name: Remove the test database
+  mysql_db:
+    name: test
+    state: absent
+
+- name: Remove anonymous users
+  mysql_user:
+    name: ''
+    host: "{{ item }}"
+    state: absent
+  with_items:
+    - localhost
+
+- name: Creation des databases
+  mysql_db:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ mariadb_databases }}"
+  when: inventory_hostname == mysql_master_node
+  tags: create_databases
+
+- name: Creation des users
+  mysql_user:
+    name: "{{ item.name }}"
+    host: "{{ item.host }}"
+    password: "{{ item.password }}"
+    priv: "{{ item.priv }}"
+    state: present
+  with_items: "{{mariadb_users}}"
+  when: inventory_hostname == mysql_master_node
+  tags: create_users
+
+- name: Stop Mariadb-server
+  service:
+    name: mariadb
+    state: stopped
+
+- name: enable all cluster
+  command: pcs cluster enable --all
+  when: inventory_hostname == mysql_master_node
+
+- name: start all cluster
+  command: pcs cluster start --all
+  when: inventory_hostname == mysql_master_node
+#- name: Configuration des acces root
+#  mysql_user:
+#    name: root
+#    host: "{{ item }}"
+#    password: "{{ mysql_root_password }}"
+#    state: present
+#    priv: "*.*:ALL"
+#  with_items:
+#    - '127.0.0.1'
+#    - '::1'
+#    - localhost

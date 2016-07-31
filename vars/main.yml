@@ -1,0 +1,85 @@
+---
+# vars file for roles/c4a-ansible-galera-cluster
+mariadb_databases:
+  - keystone
+  - glance
+  - nova
+  - nova_api
+  - neutron
+  - cinder
+  - ceilometer
+  - swift
+
+mariadb_users:
+  - name: keystone
+    password: "{{ keystonedb_pass }}"
+    host:
+      - localhost
+      - '{{ vip_keystone }}'
+      - '127.0.0.1'
+      - '::1'
+      - '%'
+    priv: "keystone.*:ALL,GRANT"
+  - name: glance
+    password: "{{ glancedb_pass }}"
+    host:
+      - localhost
+      - '{{ vip_glance }}'
+      - '127.0.0.1'
+      - '::1'
+      - '%'
+    priv: "glance.*:ALL,GRANT"
+  - name: nova 
+    password: "{{ novadb_pass }}"
+    host:
+      - localhost
+      - '{{ vip_nova }}'
+      - '127.0.0.1'
+      - '::1'
+      - '%'
+    priv: "nova.*:ALL,GRANT"
+  - name: nova_api
+    password: "{{ novadb_pass }}"
+    host:
+      - localhost
+      - '{{ vip_nova }}'
+      - '127.0.0.1'
+      - '::1'
+      - '%'
+    priv: "nova_api.*:ALL,GRANT"
+  - name: neutron
+    password: "{{ neutrondb_pass }}"
+    host:
+      - localhost
+      - '{{ vip_neutron }}'
+      - '127.0.0.1'
+      - '::1'
+      - '%'
+    priv: "neutron.*:ALL,GRANT"
+  - name: cinder   
+    password: "{{ cinderdb_pass }}"
+    host:
+      - localhost
+      - '{{ vip_cinder }}'
+      - '127.0.0.1'
+      - '::1'
+      - '%'
+    priv: "cinder.*:ALL,GRANT"
+  - name: ceilometer   
+    password: "{{ ceilometerdb_pass }}"
+    host:
+      - localhost
+      - '{{ vip_ceilometer }}'
+      - '127.0.0.1'
+      - '::1'
+      - '%'
+    priv: "ceilometer.*:ALL,GRANT"
+  - name: swift   
+    password: "{{ swiftdb_pass }}"
+    host:
+      - localhost
+      - '{{ vip_swift }}'
+      - '127.0.0.1'
+      - '::1'
+      - '%'
+    priv: "swift.*:ALL,GRANT"

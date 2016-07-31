@@ -1,0 +1,13 @@
+---
+# tasks file for roles/ansible-galera-cluster
+- include: reset.yml
+  when: galera_reset_cluster is defined and
+        galera_reset_cluster == true
+
+- include: install.yml
+
+- include: create_database.yml
+
+- include: firewall.yml
+  when: mysql_firewalld is defined and
+        mysql_firewalld == true

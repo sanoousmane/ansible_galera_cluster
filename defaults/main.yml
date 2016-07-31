@@ -1,0 +1,33 @@
+---
+# defaults file for roles/ansible-galera-cluster
+
+cluster_username: clustercheck
+cluster_userpass: MTVlODdkYjVhOGVk
+password_hacluster_user: ZGFhMTk2MWZlNGQxNTMzNDUxYWI5NDlh
+mysql_root_password: OTllMWZiM2MzMjY1YmE4YTk0OGVhZDI5
+mysql_master_node: controller-1
+mysql_port: 3306
+mysql_firewalld: false
+mariadb_datadir: /var/lib/mysql
+mariadb_config: my.cnf.d/galera.cnf
+galera_reset_cluster: true
+node1: controller-1
+node2: controller-2
+node3: controller-3
+node4: controller-4
+vip_keystone: 10.10.38.219
+vip_glance: 10.10.38.220
+vip_cinder: 10.10.38.221
+vip_neutron: 10.10.38.222
+vip_nova: 10.10.38.223
+vip_ceilometer: 10.10.38.224
+vip_swift: 10.10.38.225
+vip_horizon: 10.10.38.226
+keystonedb_pass: YmM5NWQyZWQwZjY0YTYwMTRjOTUxZDI3
+glancedb_pass: OTBlOWRlNTcxMDMxNmEyNTFmMDA4N2Ji
+novadb_pass: ZWQ2NmM5N2I0OGZlZGNlMzg3M2FiMTlj
+neutrondb_pass: NWNmMDEzN2RkOTNlNTMyZWM4MjExNzA3
+cinderdb_pass: MDZhNGE3YjIwNGZlZGE3ZTNmNTMyNWMz
+ceilometerdb_pass: Mjg0YWI5OTg4OWU4YWRjZGFiZDQwNDFh
+swiftdb_pass: ZTk4NjcxOWE4OWE1ZTJlYjFkOWY0Mzcx
+
